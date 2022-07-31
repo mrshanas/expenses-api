@@ -43,3 +43,49 @@ export const createUser = async (req, res, next) => {
     next(error);
   }
 };
+
+export const getUser = async (req, res, next) => {
+  const { id } = req.params;
+
+  try {
+    const user = await User.findById(id);
+    if (!user) return res.status(404).json({ error: "User not found" });
+
+    return res.status(200).json({ user });
+  } catch (error) {
+    console.log(error);
+    next(error);
+  }
+};
+export const updateUser = async (req, res, next) => {
+  const { id } = req.params;
+
+  try {
+    await User.findByIdAndUpdate(id, req.body, (err, user) => {
+      console.log({ err, user });
+      if (err) {
+        return res.status(400).json({ err });
+      }
+
+      return res.status(200).json({ user });
+    });
+  } catch (error) {
+    console.log(error);
+    next(error);
+  }
+};
+export const deleteUser = async (req, res, next) => {
+  const { id } = req.params;
+
+  try {
+    await User.findByIdAndDelete(id, (err, user) => {
+      console.log({ err, user });
+      if (!err) {
+        return res.status(204).json({ success: "User deleted" });
+      }
+    });
+  } catch (error) {
+    console.log(error);
+    next(error);
+  }
+};

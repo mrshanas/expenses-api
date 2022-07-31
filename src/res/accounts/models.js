@@ -1,5 +1,8 @@
 import mongoose from "mongoose";
 
+import { Expense } from "../expenses/models.js";
+import { Income } from "../income/models.js";
+
 const accountSchema = new mongoose.Schema(
   {
     name: {
@@ -33,5 +36,17 @@ const accountSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
+
+accountSchema.post("deleteOne", async function (next) {
+  try {
+    await Expense.deleteMany({ _id: this.expenses });
+    await Income.deleteMany({ _id: this.incomes });
+
+    next();
+  } catch (error) {
+    console.log(error);
+    next(error);
+  }
+});
 
 export const Account = mongoose.model("Account", accountSchema);
